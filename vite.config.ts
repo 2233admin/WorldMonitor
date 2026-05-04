@@ -161,6 +161,23 @@ function youtubeLivePlugin(): Plugin {
   };
 }
 
+function devRedirectPlugin(): Plugin {
+  return {
+    name: 'dev-redirect',
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        // Dev mode: redirect / to /app.html (skip auth/landing)
+        if (req.url === '/' || req.url === '/index.html') {
+          res.writeHead(302, { Location: '/app.html' });
+          res.end();
+          return;
+        }
+        next();
+      });
+    },
+  };
+}
+
 function localApiPlugin(): Plugin {
   return {
     name: 'local-api',
@@ -247,6 +264,7 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_STRIPE_ANNUAL_PRICE_ID': JSON.stringify(process.env.STRIPE_ANNUAL_PRICE_ID || ''),
     },
     plugins: [
+      devRedirectPlugin(),
       htmlVariantPlugin(),
       react(),
       localApiPlugin(),

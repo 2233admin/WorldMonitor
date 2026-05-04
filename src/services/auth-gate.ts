@@ -13,6 +13,14 @@ export function waitForAuth(): Promise<User | null> {
             resolve(null);
         }, 5000);
 
+        // Dev mode mock — auth.onAuthStateChanged may not be real Firebase
+        if (typeof auth.onAuthStateChanged !== 'function' ||
+            !('app' in auth)) {
+            clearTimeout(timeout);
+            resolve(null);
+            return;
+        }
+
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             clearTimeout(timeout);
             unsubscribe();

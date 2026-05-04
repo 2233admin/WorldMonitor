@@ -21,3 +21,4 @@ ideas/
 test-results/
 src-tauri/sidecar/node/*
 !src-tauri/sidecar/node/.gitkeep
+.gitnexus

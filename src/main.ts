@@ -79,25 +79,30 @@ const chunkReloadStorageKey = installChunkReloadGuard(__APP_VERSION__);
 
 // Initialize application
 document.addEventListener('DOMContentLoaded', async () => {
+  const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   let user = null;
 
-  try {
-    user = await waitForAuth();
-  } catch (e) {
-    console.error('Auth check failed', e);
+  if (!isDev) {
+    try {
+      user = await waitForAuth();
+    } catch (e) {
+      console.error('Auth check failed', e);
+    }
   }
 
-  if (!user) {
+  if (!user && !isDev) {
     // Redirect to Landing Page
     console.log('[Main] User not authenticated. Redirecting to landing.');
     window.location.href = '/';
   } else {
-    // User is authenticated, but must also check subscription
+    // User is authenticated (or dev mode), check subscription
     try {
-      const active = await checkAuthentication();
-      if (!active) return; // checkAuthentication handled redirect
+      if (!isDev) {
+        const active = await checkAuthentication();
+        if (!active) return; // checkAuthentication handled redirect
+      }
 
-      console.log('[Main] Subscription verified. Initializing application.');
+      console.log('[Main] Initializing application.');
 
       // Apply stored theme preference before app initialization (safety net for inline script)
       applyStoredTheme();

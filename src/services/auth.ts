@@ -7,10 +7,16 @@ class AuthService {
     private listeners: Set<(user: User | null) => void> = new Set();
 
     private constructor() {
-        onAuthStateChanged(auth, (user) => {
-            this.user = user;
-            this.notifyListeners();
-        });
+        try {
+            if ('app' in auth) {
+                onAuthStateChanged(auth, (user) => {
+                    this.user = user;
+                    this.notifyListeners();
+                });
+            }
+        } catch {
+            console.warn('[AuthService] Firebase not available, running without auth');
+        }
     }
 
     static getInstance(): AuthService {
