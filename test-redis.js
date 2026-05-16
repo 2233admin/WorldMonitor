@@ -1,7 +1,10 @@
 import 'dotenv/config';
 
 const UPSTASH_REDIS_REST_URL = 'https://internal-slug-38091.upstash.io';
-const UPSTASH_REDIS_REST_TOKEN = 'AZTLAAIncDFhMmRmMTYyYjg0YzI0NmRiYTU0OGU3MDIyMDcwMDcyZHAxMzgwOTE';
+const UPSTASH_REDIS_REST_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+if (!UPSTASH_REDIS_REST_TOKEN) {
+    throw new Error('UPSTASH_REDIS_REST_TOKEN not set; source D:/keys/.env or set in WorldMonitor/.env');
+}
 
 async function checkRedis() {
     // Check the email code
